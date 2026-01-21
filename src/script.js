@@ -59,33 +59,60 @@ fontLoader.load(
         const text = new THREE.Mesh(textGeometry, material)
         scene.add(text)
 
+        /**
+         * Objects
+         */
+        //function to generate donuts
+        const count = {donutCount: 3000}
         const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
 
-        console.time('donuts')
-        for(let i = 0; i<5000; i++){
-            
-            const donut = new THREE.Mesh(donutGeometry, material)
+        //function to generate shapes
+        const donutGroup = new THREE.Group();
+        function shapeSetup(geometry, count){
+            console.time('donuts')
+            for(let i = 0; i<count.donutCount; i++){
+                const donut = new THREE.Mesh(donutGeometry, material)
 
-            donut.position.x = (Math.random() - 0.5) * 50
-            donut.position.y = (Math.random() - 0.5) * 50
-            donut.position.z = (Math.random() - 0.5) * 50
+                donut.position.x = (Math.random() - 0.5) * 50
+                donut.position.y = (Math.random() - 0.5) * 50
+                donut.position.z = (Math.random() - 0.5) * 50
 
-            donut.rotation.x = Math.random() * Math.PI
-            donut.rotation.y = Math.random() * Math.PI
+                donut.rotation.x = Math.random() * Math.PI
+                donut.rotation.y = Math.random() * Math.PI
 
-            const scale = Math.random()
-            donut.scale.set(scale, scale, scale)
+                const scale = Math.random()
+                donut.scale.set(scale, scale, scale)
 
-            scene.add(donut)
+                donutGroup.add(donut)
+                console.log(donutGroup.length)
+            }
+            scene.add(donutGroup)
+            console.timeEnd('donuts')
         }
-        console.timeEnd('donuts')
 
+        //function to delete donut Group
+        function removeShapes(){
+            while(donutGroup.children.length>0){
+                const child = donutGroup.children[0];
+                donutGroup.remove(child);
+            }
+        }
+
+        shapeSetup(donutGeometry, count)
+        
         //Controller for matcap texture
         gui.add(params, 'matcap', Object.keys(matcapTexture)).onChange(value =>{
-            matcapTexture.colorSpace = THREE.SRGBColorSpace
             material.matcap = matcapTexture[value]
             text.needsUpdate = true
             console.log(`MatCap changed to: ${value}`)
+        })
+
+        //Controller for donut Count
+        gui.add(count, 'donutCount').min(100).max(10000).step(50).onChange(value =>{
+            removeShapes()
+            count.needsUpdate = true
+            shapeSetup(donutGeometry, count)
+            console.log(`donutCount changed to: ${value}`)
         })
     }
 )
