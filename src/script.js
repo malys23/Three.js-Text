@@ -20,8 +20,16 @@ const scene = new THREE.Scene()
  * Textures
  */
 const textureLoader = new THREE.TextureLoader()
-const matcapTexture = textureLoader.load('/textures/matcaps/1.png')
+const matcapTexture = {
+    '1': textureLoader.load('/textures/matcaps/1.png'),
+    '2': textureLoader.load('/textures/matcaps/2.png'),
+    '3': textureLoader.load('/textures/matcaps/3.png'),
+    '4': textureLoader.load('/textures/matcaps/4.png'),
+    '5': textureLoader.load('/textures/matcaps/5.png')
+}
+const params = {matcap: '1'}
 matcapTexture.colorSpace = THREE.SRGBColorSpace
+
 
 /**
  * Fonts
@@ -47,14 +55,14 @@ fontLoader.load(
 
         textGeometry.center()
 
-        const material = new THREE.MeshMatcapMaterial({matcap: matcapTexture })
+        const material = new THREE.MeshMatcapMaterial({matcap: matcapTexture['1'] })
         const text = new THREE.Mesh(textGeometry, material)
         scene.add(text)
 
         const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
 
         console.time('donuts')
-        for(let i = 0; i<3000; i++){
+        for(let i = 0; i<5000; i++){
             
             const donut = new THREE.Mesh(donutGeometry, material)
 
@@ -71,6 +79,14 @@ fontLoader.load(
             scene.add(donut)
         }
         console.timeEnd('donuts')
+
+        //Controller for matcap texture
+        gui.add(params, 'matcap', Object.keys(matcapTexture)).onChange(value =>{
+            matcapTexture.colorSpace = THREE.SRGBColorSpace
+            material.matcap = matcapTexture[value]
+            text.needsUpdate = true
+            console.log(`MatCap changed to: ${value}`)
+        })
     }
 )
 
