@@ -8,7 +8,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
  * Base
  */
 // Debug
-const gui = new GUI()
+const gui = new GUI({ width: 300 })
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -30,13 +30,13 @@ const matcapTexture = {
 const params = {matcap: '1'}
 matcapTexture.colorSpace = THREE.SRGBColorSpace
 
-
 /**
  * Fonts
  */
 const fontLoader = new FontLoader()
 const material = new THREE.MeshMatcapMaterial({matcap: matcapTexture['1'] })
-const writing = {message: 'Hello Three.js'}
+
+const writing = {message: 'Your Text Here'}
 const textGroup = new THREE.Group();
 //function to generate writing
 function textCreation(writing){
@@ -85,40 +85,50 @@ gui.add(writing, 'message').onFinishChange(value=>{
 /**
 * Objects
 */
-//function to generate donuts
-const count = {donutCount: 1000}
+//function to generate shapes
+const count = {shapeCount: 1000}
+const density = {shapeDensity: 20}
+const shapeGroup = new THREE.Group();
+
 const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
-const donutGroup = new THREE.Group();
-const density = {donutDensity: 20}
+const sphereGeometry = new THREE.SphereGeometry(0.5, 64, 64)
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+const shapeGeometry = {
+    'Donuts': donutGeometry,
+    'Spheres': sphereGeometry,
+    'Boxes': boxGeometry
+}
+const shapes = {geometry: shapeGeometry['Donuts']}
+
 function shapeSetup(geometry, count){
-    console.time('donuts')
-    for(let i = 0; i<count.donutCount; i++){
-        const donut = new THREE.Mesh(donutGeometry, material)
+    console.time('shapes')
+    for(let i = 0; i<count.shapeCount; i++){
+        const shape = new THREE.Mesh(geometry, material)
 
-        donut.position.x = (Math.random() - 0.5) * density.donutDensity
-        donut.position.y = (Math.random() - 0.5) * density.donutDensity
-        donut.position.z = (Math.random() - 0.5) * density.donutDensity
+        shape.position.x = (Math.random() - 0.5) * density.shapeDensity
+        shape.position.y = (Math.random() - 0.5) * density.shapeDensity
+        shape.position.z = (Math.random() - 0.5) * density.shapeDensity
 
-        donut.rotation.x = Math.random() * Math.PI
-        donut.rotation.y = Math.random() * Math.PI
+        shape.rotation.x = Math.random() * Math.PI
+        shape.rotation.y = Math.random() * Math.PI
 
         const scale = Math.random()
-        donut.scale.set(scale, scale, scale)
+        shape.scale.set(scale, scale, scale)
 
-        donutGroup.add(donut)
-        console.log(donutGroup.length)
+        shapeGroup.add(shape)
+        console.log(shapeGroup.length)
     }
-    scene.add(donutGroup)
-    console.timeEnd('donuts')
+    scene.add(shapeGroup)
+    console.timeEnd('shapes')
 }
 
-shapeSetup(donutGeometry, count)
+shapeSetup(shapes.geometry, count)
 
-//function to delete donut Group
+//function to delete shape Group
 function removeShapes(){
-    while(donutGroup.children.length>0){
-        const child = donutGroup.children[0];
-        donutGroup.remove(child);
+    while(shapeGroup.children.length>0){
+        const child = shapeGroup.children[0];
+        shapeGroup.remove(child);
     }
 }       
 //Controller for matcap texture
@@ -128,20 +138,28 @@ gui.add(params, 'matcap', Object.keys(matcapTexture)).onChange(value =>{
     console.log(`MatCap changed to: ${value}`)
 })
 
-//Controller for donut Count
-gui.add(count, 'donutCount').min(100).max(10000).step(50).onChange(value =>{
+//Controller for Count
+gui.add(count, 'shapeCount').min(100).max(10000).step(50).onChange(value =>{
     removeShapes()
     count.needsUpdate = true
-    shapeSetup(donutGeometry, count)
-    console.log(`donutCount changed to: ${value}`)
+    shapeSetup(shapes.geometry, count)
+    console.log(`shapeCount changed to: ${value}`)
 })
 
-//Controller for donut Density
-gui.add(density, 'donutDensity').min(10).max(200).step(10).onChange(value =>{
+//Controller for Density
+gui.add(density, 'shapeDensity').min(10).max(200).step(10).onChange(value =>{
     removeShapes()
     density.needsUpdate = true
-    shapeSetup(donutGeometry, count)
-    console.log(`donutDensity changed to: ${value}`)
+    shapeSetup(shapes.geometry, count)
+    console.log(`shapeDensity changed to: ${value}`)
+})
+
+//Controller for shape
+gui.add(shapes, 'geometry', Object.keys(shapeGeometry)).onChange(value =>{
+    removeShapes()
+    shapes.geometry = shapeGeometry[value]
+    shapeSetup(shapes.geometry, count)
+    console.log(`Shape changed to: ${value}`)
 })
 
 /**
@@ -174,14 +192,14 @@ window.addEventListener('resize', () =>
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 1
 camera.position.y = 1
-camera.position.z = 2
+camera.position.z = 3
 scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 
-/**
+/*
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
