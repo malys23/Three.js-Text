@@ -37,35 +37,50 @@ matcapTexture.colorSpace = THREE.SRGBColorSpace
 const fontLoader = new FontLoader()
 const material = new THREE.MeshMatcapMaterial({matcap: matcapTexture['1'] })
 const writing = {message: 'Hello Three.js'}
-fontLoader.load(
-    '/fonts/helvetiker_regular.typeface.json',
-    (font) => {
-        const textGeometry = new TextGeometry(
-            writing.message, 
-            {
-                font: font, 
-                size: 0.5,
-                depth: 0.2,
-                curveSegments: 5,
-                bevelEnabled: true,
-                bevelThickness: 0.03,
-                bevelSize: 0.02,
-                bevelOffset: 0,
-                bevelSegments: 4
-            }
-        )
+const textGroup = new THREE.Group();
+//function to generate writing
+function textCreation(writing){
+    fontLoader.load(
+        '/fonts/helvetiker_regular.typeface.json',
+        (font) => {
+            const textGeometry = new TextGeometry(
+                writing.message, 
+                {
+                    font: font, 
+                    size: 0.5,
+                    depth: 0.2,
+                    curveSegments: 5,
+                    bevelEnabled: true,
+                    bevelThickness: 0.03,
+                    bevelSize: 0.02,
+                    bevelOffset: 0,
+                    bevelSegments: 4
+                }
+            )
+            textGeometry.center()
+            const text = new THREE.Mesh(textGeometry, material)
+            textGroup.add(text)
+            scene.add(textGroup)     
+        }
+    ) 
+}
+textCreation(writing)
 
-        textGeometry.center()
-
-        const text = new THREE.Mesh(textGeometry, material)
-        scene.add(text)    
+//function to remove writing
+function removeText(){
+    while(textGroup.children.length>0){
+        const child = textGroup.children[0];
+        textGroup.remove(child);
     }
-)
+}
 
 //gui to change text
 gui.add(writing, 'message').onFinishChange(value=>{
+    removeText()
+    writing.needsUpdate
+    textCreation(writing)
     console.log('User typed: ', value)
-})    
+})  
 
 /**
 * Objects
@@ -106,7 +121,6 @@ function removeShapes(){
         donutGroup.remove(child);
     }
 }       
-        
 //Controller for matcap texture
 gui.add(params, 'matcap', Object.keys(matcapTexture)).onChange(value =>{
     material.matcap = matcapTexture[value]
