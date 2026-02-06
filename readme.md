@@ -3,10 +3,10 @@ Website where users can adjust text and experiment with different object shapes,
 
 ## Features
 - Change the position, text, density of objects, matcap, object geometries <br>
-<br>
-##Tech Stack
+
+## Tech Stack
 - Three.js
 - Node.js
-<br>
-  
+  <br>
 Live Link: (https://three-js-text-dusky.vercel.app/)
+
