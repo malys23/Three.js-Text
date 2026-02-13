@@ -10,4 +10,7 @@ Website where users can adjust text and experiment with different object shapes,
 
 Live Link: (https://three-js-text-dusky.vercel.app/)
 
+### Sources
+EventEmmitter.js created by Bruno Simon (https://gist.github.com/brunosimon/120acda915e6629e3a4d497935b16bdf.js)
+
 
