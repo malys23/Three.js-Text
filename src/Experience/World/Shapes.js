@@ -35,7 +35,7 @@ export default class Shapes
     {
         this.textures = {}
 
-        this.textures.color = this.resources.items.environmentMapTexture
+        this.textures.color = this.resources.items.matcap1
         this.textures.color.colorSpace = THREE.SRGBColorSpace
     }
 

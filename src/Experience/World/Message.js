@@ -21,14 +21,14 @@ export default class Message
     {
         this.textures = {}
 
-        this.textures.color = this.resources.items.environmentMapTexture
+        this.textures.color = this.resources.items.matcap1
         this.textures.color.colorSpace = THREE.SRGBColorSpace
     }
 
     setMaterial()
     {
         this.material = new THREE.MeshMatcapMaterial({
-            maps: this.textures.color
+            map: this.textures.color
         })
     }
 

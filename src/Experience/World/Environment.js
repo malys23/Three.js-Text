@@ -20,7 +20,7 @@ export default class Environment
     setEnvironmentMap()
     {
         this.environmentMap = {}
-        this.environmentMap.texture = this.resources.items.environmentMapTexture
+        this.environmentMap.texture = this.resources.items.matcap1
         this.environmentMap.texture.colorSpace = THREE.SRGBColorSpace
 
         this.scene.environment = this.environmentMap.texture
