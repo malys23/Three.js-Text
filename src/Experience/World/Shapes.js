@@ -1,4 +1,5 @@
-import Experience from "../Experience.js"
+import * as THREE from 'three'
+import Experience from '../Experience.js'
 
 export default class Shapes
 {
@@ -20,7 +21,7 @@ export default class Shapes
         this.sphereGeometry = new THREE.SphereGeometry(0.5, 64, 64)
         this.boxGeometry = new THREE.BoxGeometry(1, 1, 1)
         
-        this.shapeGeometry = 
+        const shapeGeometry = 
         {
             'Donuts': this.donutGeometry,
             'Spheres': this.sphereGeometry,
@@ -35,15 +36,14 @@ export default class Shapes
         this.textures = {}
 
         this.textures.color = this.resources.items.environmentMapTexture
-        this.textures.color.colorSpace = ThreeMFLoader.SRGBColorSpace
+        this.textures.color.colorSpace = THREE.SRGBColorSpace
     }
 
     //For Matcaps
     setMaterial()
     {
         this.material = new THREE.MeshMatcapMaterial({
-            map: this.textures.color,
-            normalMap: this.textures.normal
+            map: this.textures.color
         })
     }
 

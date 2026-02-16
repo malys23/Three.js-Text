@@ -1,6 +1,4 @@
 import * as THREE from 'three'
-// import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
-// import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 import EventEmitter from './EventEmitter'
 
 export default class Resources extends EventEmitter
@@ -40,7 +38,6 @@ export default class Resources extends EventEmitter
                 }
             )
         }
-
     }
 
     sourceLoaded(sources, file)
